@@ -27,20 +27,20 @@ public class FourFiveGServiceImpl implements FourFiveGService {
             String[] grids = grididStr.split(",");
             for (String gridid :grids){
                 //获取4g 工参 和4g扫频
-                fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_mastercell_cover", Integer.parseInt(gridid)));
+                fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_mastercell_cover","fourg_saopin_addr_mastercell", Integer.parseInt(gridid)));
                 fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell"));
 
 
                 //获取5g 工参和5g扫频
-                fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_mastercell_cover" ,Integer.parseInt(gridid)));
+                fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_mastercell_cover" ,"fiveg_saopin_addr_mastercell",Integer.parseInt(gridid)));
                 fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell"));
 
 
             }
         }else{
-            fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_mastercell_cover", null));
+            fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_mastercell_cover","fourg_saopin_addr_mastercell", null));
             fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell"));
-            fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_mastercell_cover" ,null));
+            fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_mastercell_cover" ,"fiveg_saopin_addr_mastercell",null));
             fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell"));
 
         }

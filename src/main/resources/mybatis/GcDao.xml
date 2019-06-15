@@ -8,7 +8,8 @@
         f.electronictiltangle,f.mechanicaltiltangle,f.totaldowntiltangle,f.azimuth,f.antennaheight,f.grid,'cell' `type`,
         c.coverf100,
         c.coverf110,
-        c.coverf120
+        c.coverf120,
+        IFNULL(s.sampleCount,0) sampleCount
         <if test="tableName == 'fiveg_gc' ">
             ,f.gnodeb enodeb
         </if>
@@ -22,6 +23,12 @@
             SELECT * FROM ${coverTableName} c
             WHERE c.date=(SELECT MAX(b.date) FROM ${coverTableName} b)
         ) c ON c.cellid=f.id
+        LEFT JOIN
+        (
+            SELECT count(*) sampleCount,s.cellid FROM ${saoPinTableName} s
+            WHERE s.date=(SELECT MAX(b.date) FROM ${saoPinTableName} b)
+            group by s.cellid
+        ) s ON s.cellid=f.id
         <if test="gridid !=null">
             WHERE f.grid=#{gridid}
         </if>
