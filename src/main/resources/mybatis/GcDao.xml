@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c.dao.GcDao">
+
+    <select id="getGcInfo" resultType="map">
+        SELECT
+        f.id,f.districtandcounty,f.cellname,f.longitude,f.latitude,f.cellpower,
+        f.electronictiltangle,f.mechanicaltiltangle,f.totaldowntiltangle,f.azimuth,f.antennaheight,f.grid,'cell' `type`,
+        c.coverf100,
+        c.coverf110,
+        c.coverf120
+        <if test="tableName == 'fiveg_gc' ">
+            ,f.gnodeb enodeb
+        </if>
+        <if test="tableName == 'fourg_gc' ">
+            ,f.enodeb
+            ,f.cgi,f.coveragetype
+        </if>
+        FROM ${tableName} f
+        LEFT JOIN
+        (
+            SELECT * FROM ${coverTableName} c
+            WHERE c.date=(SELECT MAX(b.date) FROM ${coverTableName} b)
+        ) c ON c.cellid=f.id
+        <if test="gridid !=null">
+            WHERE f.grid=#{gridid}
+        </if>
+
+    </select>
+
+    <select id="getSaoPinInfo" resultType="map">
+        SELECT s.id,s.cellid,s.rs rsrp,s.longitude ,s.latitude  ,'saopin' `type`
+        FROM ${tableName} s
+        WHERE s.date=(SELECT MAX(s.date) FROM fourg_saopin_addr_mastercell s)
+
+
+    </select>
+
+    <select id="getAllSanGe" resultType="map">
+        SELECT g.id  ,g.gridid `name`,g.latitude,g.longitude,g.boundaries FROM grid g
+      </select>
+
+</mapper>
