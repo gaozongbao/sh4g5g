@@ -26,22 +26,23 @@ public class FourFiveGServiceImpl implements FourFiveGService {
         if(StringUtils.isNotBlank(grididStr)){
             String[] grids = grididStr.split(",");
             for (String gridid :grids){
-                //获取4g 工参 和4g扫频
-                fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_mastercell_cover","fourg_saopin_addr_mastercell", Integer.parseInt(gridid)));
-                fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell"));
+                //获取4g 工参（带覆盖率）
+                fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_saopin_mastercell_cover","fourg_saopin_addr_mastercell", gridid));
+                //获取4g 扫频（带覆带小区）
+                fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell", Integer.parseInt(gridid)));
 
 
                 //获取5g 工参和5g扫频
-                fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_mastercell_cover" ,"fiveg_saopin_addr_mastercell",Integer.parseInt(gridid)));
-                fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell"));
+                fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_saopin_mastercell_cover" ,"fiveg_saopin_addr_mastercell",gridid));
+                fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell", Integer.parseInt(gridid)));
 
 
             }
         }else{
-            fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_mastercell_cover","fourg_saopin_addr_mastercell", null));
-            fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell"));
-            fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_mastercell_cover" ,"fiveg_saopin_addr_mastercell",null));
-            fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell"));
+            fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_saopin_mastercell_cover","fourg_saopin_addr_mastercell", null));
+            fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell", null));
+            fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_saopin_mastercell_cover" ,"fiveg_saopin_addr_mastercell",null));
+            fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell",null));
 
         }
         res.put("fourG",fourg);
