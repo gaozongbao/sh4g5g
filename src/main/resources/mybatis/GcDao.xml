@@ -33,7 +33,10 @@
             group by s.cellid
         ) s ON s.cellid=f.id
         <if test="gridid !=null">
-            WHERE f.grid=#{gridid}
+            WHERE f.grid IN
+            <foreach collection="gridid" item="item"  separator="," open="(" close=")">
+                #{item}
+            </foreach>
         </if>
 
     </select>
@@ -43,8 +46,25 @@
         FROM ${tableName} s
         WHERE s.date=(SELECT MAX(s.date) FROM fourg_saopin_addr_mastercell s)
         <if test="gridid !=null">
-          AND s.gridid=#{gridid}
+            and s.gridid IN
+            <foreach collection="gridid" item="item"  separator="," open="(" close=")">
+                #{item}
+            </foreach>
         </if>
+
+    </select>
+    <select id="getMroInfo" resultType="map">
+       SELECT c.*,g.latitude,g.longitude,g.azimuth FROM ${tableName} c
+        LEFT JOIN fourg_gc g ON c.cgiid=g.id
+        WHERE 1=1
+        <if test="gridid !=null">
+            and g.grid IN
+            <foreach collection="gridid" item="item"  separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+
+;
 
     </select>
 

@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional
@@ -25,28 +22,40 @@ public class FourFiveGServiceImpl implements FourFiveGService {
         List<Map<String, Object>> fiveg =new ArrayList<>();
         if(StringUtils.isNotBlank(grididStr)){
             String[] grids = grididStr.split(",");
-            for (String gridid :grids){
-                //获取4g 工参（带覆盖率）
-                fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_saopin_mastercell_cover","fourg_saopin_addr_mastercell", gridid));
-                //获取4g 扫频（带覆带小区）
-                fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell", Integer.parseInt(gridid)));
+            //获取4g 扫频（带覆带小区）
+            fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell", Arrays.asList(grids)));
+            //获取4g 工参（带覆盖率）
+            fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_saopin_mastercell_cover","fourg_saopin_addr_mastercell", Arrays.asList(grids)));
 
 
-                //获取5g 工参和5g扫频
-                fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_saopin_mastercell_cover" ,"fiveg_saopin_addr_mastercell",gridid));
-                fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell", Integer.parseInt(gridid)));
-
-
-            }
+            //获取5g 工参和5g扫频
+            fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell", Arrays.asList(grids)));
+            fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_saopin_mastercell_cover" ,"fiveg_saopin_addr_mastercell",Arrays.asList(grids)));
         }else{
-            fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_saopin_mastercell_cover","fourg_saopin_addr_mastercell", null));
             fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell", null));
-            fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_saopin_mastercell_cover" ,"fiveg_saopin_addr_mastercell",null));
             fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell",null));
+
+            fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_saopin_mastercell_cover","fourg_saopin_addr_mastercell", null));
+            fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_saopin_mastercell_cover" ,"fiveg_saopin_addr_mastercell",null));
 
         }
         res.put("fourG",fourg);
         res.put("fiveG",fiveg);
+        return res;
+    }
+
+    @Override
+    public Map<String, Object> initMroData(String grididStr) {
+        Map<String,Object> res = new HashMap<>();
+        if(StringUtils.isNotBlank(grididStr)){
+            String[] grids = grididStr.split(",");
+            res.put("fourG",gcDao.getMroInfo("fourg_mro_cell_cover",Arrays.asList(grids)));
+            res.put("fiveG", gcDao.getMroInfo("fiveg_mro_cell_cover",Arrays.asList(grids)));
+        }else{
+            res.put("fourG",gcDao.getMroInfo("fourg_mro_cell_cover",null));
+            res.put("fiveG",gcDao.getMroInfo("fiveg_mro_cell_cover",null));
+
+        }
         return res;
     }
 

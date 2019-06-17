@@ -19,7 +19,7 @@ public class FiveFourgController {
     @ResponseBody
     public ResponseEntity getTest(String gridid,String datatype) {
         if("mro".equals(datatype)){
-            return null;
+            return  ResponseEntity.successResponse(fourFiveGService.initMroData(gridid), "success");
         }else{
             return ResponseEntity.successResponse(fourFiveGService.initSaoPinData(gridid), "success");
         }
