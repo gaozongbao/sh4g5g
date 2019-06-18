@@ -3,42 +3,64 @@
 <mapper namespace="com.c.dao.GcDao">
 
     <select id="getGcInfo" resultType="map">
-        SELECT
-        f.id,f.districtandcounty,f.cellname,f.longitude,f.latitude,f.cellpower,
-        f.electronictiltangle,f.mechanicaltiltangle,f.totaldowntiltangle,f.azimuth,f.antennaheight,f.grid,'cell' `type`,
-        f.cgi,
-        c.coverf100,
-        c.coverf110,
-        c.coverf120,
+        <if test="type == '4g' ">
+            SELECT
+            f.districtandcounty,f.longitude,f.latitude,f.cellpower,
+            f.electronictiltangle,f.mechanicaltiltangle,f.totaldowntiltangle,f.azimuth,f.antennaheight,'cell' `type`,
+            f.cgi,f.coveragetype,
+            c.coverf100, c.coverf110, c.coverf120,
+            IFNULL(s.sampleCount,0) sampleCount
+            ,f.enodeb ,f.cellname,f.id ,f.grid
+            FROM fourg_gc f
+            LEFT JOIN
+            (
+                SELECT * FROM fourg_saopin_mastercell_cover c
+                WHERE c.date=(SELECT MAX(b.date) FROM fourg_saopin_mastercell_cover b)
+            ) c ON c.cellid=f.id
+            LEFT JOIN
+            (
+                SELECT count(*) sampleCount,s.cellid FROM fourg_saopin_addr_mastercell s
+                WHERE s.date=(SELECT MAX(b.date) FROM fourg_saopin_addr_mastercell b)
+                group by s.cellid
+            ) s ON s.cellid=f.id
+            WHERE 1=1 and c.coverf100 is not null
+            <if test="gridid !=null">
+                AND f.grid IN
+                <foreach collection="gridid" item="item"  separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </if>
 
-        IFNULL(s.sampleCount,0) sampleCount
+        <if test="type == '5g' ">
+            SELECT
+            f.districtandcounty,f.longitude,f.latitude,f.cellpower,
+            f.electronictiltangle,f.mechanicaltiltangle,f.totaldowntiltangle,f.azimuth,f.antennaheight,'cell' `type`,
+            f.cgi,f.coveragetype,
+            c.coverf100, c.coverf110, c.coverf120, IFNULL(s.sampleCount,0) sampleCount
+            ,g.gnodeb enodeb ,g.cellname  ,g.id ,g.grid
+            FROM fiveg_gc g
+            LEFT JOIN fourg_gc f on f.cgi = g.cgi
+            LEFT JOIN
+            (
+                SELECT * FROM fiveg_saopin_mastercell_cover c
+                WHERE c.date=(SELECT MAX(b.date) FROM fiveg_saopin_mastercell_cover b)
+            ) c ON c.cellid=g.id
+            LEFT JOIN
+            (
+                SELECT count(*) sampleCount,s.cellid FROM fiveg_saopin_addr_mastercell s
+                WHERE s.date=(SELECT MAX(b.date) FROM fiveg_saopin_addr_mastercell b)
+                group by s.cellid
+            ) s ON s.cellid=g.id
+            WHERE 1=1 and c.coverf100 is not null
+            <if test="gridid !=null">
+                AND g.grid IN
+                <foreach collection="gridid" item="item"  separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </if>
 
-        <if test="tableName == 'fiveg_gc' ">
-            ,f.gnodeb enodeb
-        </if>
-        <if test="tableName == 'fourg_gc' ">
-            ,f.enodeb
-           ,f.coveragetype
-        </if>
-        FROM ${tableName} f
-        LEFT JOIN
-        (
-            SELECT * FROM ${coverTableName} c
-            WHERE c.date=(SELECT MAX(b.date) FROM ${coverTableName} b)
-        ) c ON c.cellid=f.id
-        LEFT JOIN
-        (
-            SELECT count(*) sampleCount,s.cellid FROM ${saoPinTableName} s
-            WHERE s.date=(SELECT MAX(b.date) FROM ${saoPinTableName} b)
-            group by s.cellid
-        ) s ON s.cellid=f.id
-        WHERE 1=1 and c.coverf100 is not null
-        <if test="gridid !=null">
-            AND f.grid IN
-            <foreach collection="gridid" item="item"  separator="," open="(" close=")">
-                #{item}
-            </foreach>
-        </if>
 
     </select>
 

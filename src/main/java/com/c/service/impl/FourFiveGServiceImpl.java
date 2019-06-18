@@ -25,18 +25,19 @@ public class FourFiveGServiceImpl implements FourFiveGService {
             //获取4g 扫频（带覆带小区）
             fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell", Arrays.asList(grids)));
             //获取4g 工参（带覆盖率）
-            fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_saopin_mastercell_cover","fourg_saopin_addr_mastercell", Arrays.asList(grids)));
+            fourg.addAll(gcDao.getGcInfo("4g", Arrays.asList(grids)));
 
 
             //获取5g 工参和5g扫频
             fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell", Arrays.asList(grids)));
-            fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_saopin_mastercell_cover" ,"fiveg_saopin_addr_mastercell",Arrays.asList(grids)));
+            fiveg.addAll(gcDao.getGcInfo("5g",Arrays.asList(grids)));
+
         }else{
             fourg.addAll(gcDao.getSaoPinInfo("fourg_saopin_addr_mastercell", null));
             fiveg.addAll(gcDao.getSaoPinInfo("fiveg_saopin_addr_mastercell",null));
 
-            fourg.addAll(gcDao.getGcInfo("fourg_gc","fourg_saopin_mastercell_cover","fourg_saopin_addr_mastercell", null));
-            fiveg.addAll(gcDao.getGcInfo("fiveg_gc","fiveg_saopin_mastercell_cover" ,"fiveg_saopin_addr_mastercell",null));
+            fourg.addAll(gcDao.getGcInfo("4g",  null));
+            fiveg.addAll(gcDao.getGcInfo("5g",null));
 
         }
         res.put("fourG",fourg);
