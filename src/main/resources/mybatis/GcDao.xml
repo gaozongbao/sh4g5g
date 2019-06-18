@@ -32,8 +32,9 @@
             WHERE s.date=(SELECT MAX(b.date) FROM ${saoPinTableName} b)
             group by s.cellid
         ) s ON s.cellid=f.id
+        WHERE 1=1 and c.coverf100 is not null
         <if test="gridid !=null">
-            WHERE f.grid IN
+            AND f.grid IN
             <foreach collection="gridid" item="item"  separator="," open="(" close=")">
                 #{item}
             </foreach>
