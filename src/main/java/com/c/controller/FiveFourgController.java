@@ -2,6 +2,7 @@ package com.c.controller;
 
 import com.c.model.SysUser;
 import com.c.service.FourFiveGService;
+import com.c.syslog.SysLog;
 import com.c.util.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 public class FiveFourgController {
     @Autowired
     private FourFiveGService fourFiveGService;
+    @SysLog("4g5g模块页面初始化")
     @RequestMapping("/lte/initData")
     @ResponseBody
     public ResponseEntity getTest(String gridid,String datatype) {
@@ -24,6 +26,8 @@ public class FiveFourgController {
             return ResponseEntity.successResponse(fourFiveGService.initSaoPinData(gridid), "success");
         }
     }
+
+    @SysLog("4g5g模块获取所有栅格")
     @RequestMapping("/lte/getAllSanGe")
     @ResponseBody
     public ResponseEntity getAllSanGe(){
