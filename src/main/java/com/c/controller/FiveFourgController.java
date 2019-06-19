@@ -34,4 +34,5 @@ public class FiveFourgController {
 
         return  ResponseEntity.successResponse(fourFiveGService.getAllSanGe(), "success");
     }
+
 }

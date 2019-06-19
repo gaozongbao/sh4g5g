@@ -67,7 +67,7 @@
     <select id="getSaoPinInfo" resultType="map">
         SELECT s.id,s.cellid,s.rs rsrp,s.longitude ,s.latitude  ,'saopin' `type`
         FROM ${tableName} s
-        WHERE s.date=(SELECT MAX(s.date) FROM fourg_saopin_addr_mastercell s)
+        WHERE s.date=(SELECT MAX(s.date) FROM fourg_saopin_addr_mastercell s) and s.cellid !=-1
         <if test="gridid !=null">
             and s.gridid IN
             <foreach collection="gridid" item="item"  separator="," open="(" close=")">
@@ -77,8 +77,26 @@
 
     </select>
     <select id="getMroInfo" resultType="map">
-       SELECT c.*,g.latitude,g.longitude,g.azimuth FROM ${tableName} c
-        LEFT JOIN fourg_gc g ON c.cgiid=g.id
+      <if test="type=='4g'">
+          SELECT c.*,
+          g.latitude,g.longitude,g.azimuth,g.cellpower,g.electronictiltangle,
+          g.mechanicaltiltangle,g.totaldowntiltangle,g.antennaheight
+          ,g.enodeb ,g.cellname,g.cgi,
+          g.grid,g.coveragetype
+          FROM fiveg_mro_cell_cover c
+          LEFT JOIN fourg_gc g ON g.cgi = c.cgi
+
+      </if>
+      <if test="type=='5g'">
+          SELECT c.*,
+          g.latitude,g.longitude,g.azimuth,g.cellpower,g.electronictiltangle,
+          g.mechanicaltiltangle,g.totaldowntiltangle,g.antennaheight
+          ,g.gnodeb enodeb,g.cellname,g.cgi,
+          g.grid,f.coveragetype
+          FROM fiveg_mro_cell_cover c
+          LEFT JOIN fiveg_gc g ON g.cgi = c.cgi
+          LEFT JOIN fourg_gc f ON f.cgi=g.cgi
+      </if>
         WHERE 1=1
         <if test="gridid !=null">
             and g.grid IN
@@ -87,7 +105,7 @@
             </foreach>
         </if>
 
-;
+
 
     </select>
 

@@ -50,12 +50,11 @@ public class FourFiveGServiceImpl implements FourFiveGService {
         Map<String,Object> res = new HashMap<>();
         if(StringUtils.isNotBlank(grididStr)){
             String[] grids = grididStr.split(",");
-            res.put("fourG",gcDao.getMroInfo("fourg_mro_cell_cover",Arrays.asList(grids)));
-            res.put("fiveG", gcDao.getMroInfo("fiveg_mro_cell_cover",Arrays.asList(grids)));
+            res.put("fourG",gcDao.getMroInfo("4g",Arrays.asList(grids)));
+            res.put("fiveG", gcDao.getMroInfo("5g",Arrays.asList(grids)));
         }else{
-            res.put("fourG",gcDao.getMroInfo("fourg_mro_cell_cover",null));
-            res.put("fiveG",gcDao.getMroInfo("fiveg_mro_cell_cover",null));
-
+            res.put("fourG",gcDao.getMroInfo("4g",null));
+            res.put("fiveG",gcDao.getMroInfo("5g",null));
         }
         return res;
     }
