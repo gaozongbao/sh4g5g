@@ -83,9 +83,8 @@
           g.mechanicaltiltangle,g.totaldowntiltangle,g.antennaheight
           ,g.enodeb ,g.cellname,g.cgi,
           g.grid,g.coveragetype
-          FROM fiveg_mro_cell_cover c
+          FROM fourg_mro_cell_cover c
           LEFT JOIN fourg_gc g ON g.cgi = c.cgi
-
       </if>
       <if test="type=='5g'">
           SELECT c.*,
@@ -97,7 +96,7 @@
           LEFT JOIN fiveg_gc g ON g.cgi = c.cgi
           LEFT JOIN fourg_gc f ON f.cgi=g.cgi
       </if>
-        WHERE 1=1
+        WHERE 1=1 and RIGHT(c.cgi,2) IN (-1,-2,-3)
         <if test="gridid !=null">
             and g.grid IN
             <foreach collection="gridid" item="item"  separator="," open="(" close=")">
