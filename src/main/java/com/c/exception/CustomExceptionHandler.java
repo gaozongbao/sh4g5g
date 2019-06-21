@@ -48,6 +48,7 @@ public class CustomExceptionHandler {
 //	}
 
 	@ExceptionHandler(Exception.class)
+	@ResponseBody
 	public ResponseEntity handleException(Exception e){
 		logger.error(e.getMessage(), e);
 		return ResponseEntity.failResponse();
