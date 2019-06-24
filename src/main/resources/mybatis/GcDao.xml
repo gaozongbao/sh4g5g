@@ -65,15 +65,45 @@
     </select>
 
     <select id="getSaoPinInfo" resultType="map">
-        SELECT s.id,s.cellid,s.rs rsrp,s.longitude ,s.latitude  ,'saopin' `type`
-        FROM ${tableName} s
-        WHERE s.date=(SELECT MAX(s.date) FROM fourg_saopin_addr_mastercell s) and s.cellid !=-1
-        <if test="gridid !=null">
-            and s.gridid IN
-            <foreach collection="gridid" item="item"  separator="," open="(" close=")">
-                #{item}
-            </foreach>
+        <if test="type =='4g' ">
+            SELECT s.id,s.cellid,s.rs rsrp,s.longitude ,s.latitude  ,'saopin' `type`
+            FROM fourg_saopin_addr_mastercell s
+            WHERE s.date=(SELECT MAX(s.date) FROM fourg_saopin_addr_mastercell s) and s.cellid !=-1
+            <if test="gridid !=null">
+                and s.gridid IN
+                <foreach collection="gridid" item="item"  separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
         </if>
+
+        <if test="type =='5g' ">
+            SELECT s.id,s.cellid,s.rs rsrp,s.longitude ,s.latitude ,'saopin' `type`,IF(s.rs-b.rs>5,1,0) highLight
+            FROM fiveg_saopin_addr_mastercell s
+            LEFT JOIN
+            (
+                SELECT MAX(b.rs) rs,b.latitude,b.longitude FROM fourg_saopin_addr_mastercell b
+                WHERE  b.date=(SELECT MAX(s.date) FROM fourg_saopin_addr_mastercell s) AND b.cellid !=-1
+
+                <if test="gridid !=null">
+                    and b.gridid IN
+                    <foreach collection="gridid" item="item"  separator="," open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+
+                GROUP BY b.longitude,b.latitude
+            )b ON b.latitude=s.latitude AND b.longitude=s.longitude
+            WHERE s.date=(SELECT MAX(s.date) FROM fourg_saopin_addr_mastercell s) AND s.cellid !=-1
+            <if test="gridid !=null">
+                and s.gridid IN
+                <foreach collection="gridid" item="item"  separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+        </if>
+
 
     </select>
     <select id="getMroInfo" resultType="map">
