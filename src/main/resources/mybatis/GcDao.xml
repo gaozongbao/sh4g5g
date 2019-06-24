@@ -75,6 +75,7 @@
                     #{item}
                 </foreach>
             </if>
+            order by s.longitude ,s.latitude,rsrp asc
         </if>
 
         <if test="type =='5g' ">
@@ -101,7 +102,7 @@
                     #{item}
                 </foreach>
             </if>
-
+            order by s.longitude ,s.latitude,rsrp asc
         </if>
 
 
